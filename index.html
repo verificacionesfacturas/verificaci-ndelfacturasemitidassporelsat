@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verificación de Comprobantes Fiscales Digitales por Internet</title>
+    
+    <!-- Bootstrap CSS y fuentes oficiales de GOB.MX -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin-top: 80px;
+            background-color: #fcfcfc;
+            color: #333;
+        }
+        header .navbar-inverse {
+            background-color: rgb(97, 18, 50) !important;
+            border-color: #611232;
+        }
+        .sub-navbar {
+            background-color: rgb(58, 11, 30) !important;
+            border: none;
+            padding: 10px 0;
+            color: white;
+            font-weight: bold;
+        }
+        hr.red {
+            border-top: 3px solid #bc955c;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .radio-tabs-group {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 10px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-text-error {
+            color: #a94442;
+        }
+        .table > tr > th, .table > tbody > tr > th {
+            background-color: #f9f9f9;
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="reduce">
+    <header>
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="https://www.gob.mx/" style="color: white; font-weight: bold;">GOB.MX / SAT</a>
+                </div>
+            </div>
+        </nav>
+        <div class="sub-navbar navbar-fixed-top" style="margin-top: 50px;">
+            <div class="container">
+                <span>FACTURA ELECTRÓNICA</span>
+            </div>
+        </div>
+    </header>
+
+    <main role="main">
+        <div id="cuerpo_principal" class="container" style="background: white; padding: 40px; border-radius: 6px; box-shadow: 0px 2px 10px rgba(0,0,0,0.08); margin-top: 40px;">
+            
+            <div class="row">
+                <h3 class="titulo" style="color: #333; font-weight: 700; margin-bottom: 25px;">Verificación de comprobantes fiscales digitales por internet</h3>
+            </div>
+
+            <!-- Pestañas de Navegación -->
+            <div class="radio-tabs-group">
+                <div class="radio-option">
+                    <input type="radio" name="tabs" id="chkFolio" checked onclick="cambiarTab('verificaFolio')">
+                    <label for="chkFolio" style="cursor: pointer;">Consulta por Folio Fiscal</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" name="tabs" id="chkXml" onclick="cambiarTab('verificaXml')">
+                    <label for="chkXml" style="cursor: pointer;">Consulta por archivo XML</label>
+                </div>
+            </div>
+
+            <hr class="red">
+
+            <!-- Sección: Verifica por Folio -->
+            <div id="verificaFolio" class="tab-content active">
+                <p class="text-muted">A través de esta opción, usted podrá verificar si el comprobante fue certificado por el SAT.</p>
+                <br>
+                
+                <form id="aspnetForm" onsubmit="return performCheck(event);">
+                    <div class="row form-group">
+                        <div class="col-md-4">
+                            <label class="control-label">Folio fiscal <span class="form-text-error" id="marcaError_TxtUUID">*</span>:</label>
+                            <input type="text" maxlength="36" id="TxtUUID" class="form-control" style="text-transform: uppercase;" value="BD749768-AAED-479A-99A6-913F41280BD1">
+                            <small class="form-text form-text-error" id="mensajeError_TxtUUID" style="display: none">Este campo es obligatorio</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">RFC emisor <span class="form-text-error" id="marcaError_TxtRfcEmisor">*</span>:</label>
+                            <input type="text" maxlength="13" id="TxtRfcEmisor" class="form-control" style="text-transform: uppercase" value="LCO150612CH4">
+                            <small class="form-text form-text-error" id="mensajeError_TxtRfcEmisor" style="display: none">Este campo es obligatorio</small>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">RFC receptor <span class="form-text-error" id="marcaError_TxtRfcReceptor">*</span>:</label>
+                            <input type="text" maxlength="13" id="TxtRfcReceptor" class="form-control" style="text-transform: uppercase" value="XAXX010101000">
+                            <small class="form-text form-text-error" id="mensajeError_TxtRfcReceptor" style="display: none">Este campo es obligatorio</small>
+                        </div>
+                    </div>
+
+                    <div class="row form-group" style="align-items: center; display: flex; flex-wrap: wrap; margin-top: 20px;">
+                        <div class="col-md-3">
+                            <div style="background: #e9ecef; border: 1px solid #ced4da; padding: 12px; text-align: center; font-weight: bold; letter-spacing: 6px; font-size: 20px; border-radius: 4px;">
+                                7B4X9
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="control-label">Proporcione los dígitos de la imagen <span class="form-text-error" id="marcaError_TxtCaptchaNumbers">*</span>:</label>
+                            <input type="text" maxlength="5" id="TxtCaptchaNumbers" class="form-control">
+                            <small class="form-text form-text-error" id="mensajeError_TxtCaptchaNumbers" style="display: none">Este campo es obligatorio</small>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <br>
+                            <button type="submit" class="btn btn-primary" style="background-color: rgb(97, 18, 50); border-color: rgb(97, 18, 50);">Verificar CFDI</button>
+                        </div>
+                    </div>
+                </form>
+
+                <p class="text-muted" style="margin-top: 15px;"><small>* Datos obligatorios</small></p>
+
+                <!-- Resultados Estáticos del Comprobante -->
+                <div id="PnlResultados" style="margin-top: 35px;">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th scope="col">RFC del emisor</th>
+                                <th scope="col">Nombre o razón social del emisor</th>
+                                <th scope="col">RFC del receptor</th>
+                                <th scope="col">Nombre o razón social del receptor</th>
+                            </tr>
+                            <tr>
+                                <td>LCO150612CH4</td>
+                                <td>LAGOON CONCEPT</td>
+                                <td>XAXX010101000</td>
+                                <td>TEBAEV EMILIANO ZAPATA</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Folio fiscal</th>
+                                <th scope="col">Fecha de expedición</th>
+                                <th scope="col">Fecha certificación SAT</th>
+                                <th scope="col">PAC que certificó</th>
+                            </tr>
+                            <tr>
+                                <td>BD749768-AAED-479A-99A6-913F41280BD1</td>
+                                <td>2026-08-20T07:55:44</td>
+                                <td>2026-08-20T08:55:44</td>
+                                <td>PPD101129EA3</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Total del CFDI</th>
+                                <th scope="col">Efecto del comprobante</th>
+                                <th scope="col">Estado CFDI</th>
+                                <th scope="col">Estatus de cancelación</th>
+                            </tr>
+                            <tr>
+                                <td>$1,913.00</td>
+                                <td>Ingreso</td>
+                                <td><span style="color: #28a745; font-weight: bold;">Vigente</span></td>
+                                <td>Cancelable sin aceptación</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="text-right" style="margin-top: 15px;">
+                        <button type="button" onclick="window.print();" class="btn btn-primary" style="background-color: rgb(97, 18, 50); border-color: rgb(97, 18, 50);">Imprimir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Verifica por XML -->
+            <div id="verificaXml" class="tab-content">
+                <p class="text-muted">A través de esta opción, usted podrá verificar si el comprobante fue certificado por el SAT mediante archivo XML.</p>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Archivo XML *:</label>
+                    <input type="file" class="form-control" accept=".xml">
+                </div>
+                <button class="btn btn-primary" style="background-color: rgb(97, 18, 50); border-color: rgb(97, 18, 50);">Verificar Archivo XML</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Scripts de interactividad -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        function cambiarTab(tabId) {
+            $('.tab-content').removeClass('active');
+            $('#' + tabId).addClass('active');
+        }
+
+        function performCheck(event) {
+            event.preventDefault();
+            var respuesta = true;
+
+            $('#verificaFolio input[type="text"]').each(function () {
+                var campoId = $(this).attr('id');
+                if ($(this).val().trim() === "") {
+                    $("#marcaError_" + campoId).addClass("form-text-error");
+                    $("#mensajeError_" + campoId).show();
+                    respuesta = false;
+                } else {
+                    $("#marcaError_" + campoId).removeClass("form-text-error");
+                    $("#mensajeError_" + campoId).hide();
+                }
+            });
+
+            if (respuesta) {
+                alert("¡Validación local superada con éxito!");
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
